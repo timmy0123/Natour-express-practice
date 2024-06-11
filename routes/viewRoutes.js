@@ -6,11 +6,14 @@ import {
   getAccount,
   updateUserData,
   getMyTours,
+  alerts,
 } from '../controllers/viewController.js';
 //import { createBookingCheckout } from '../controllers/bookingController.js';
 import { isLoggedIn, protect } from '../controllers/authController.js';
 
 const viewRoute = express.Router();
+
+viewRoute.use(alerts);
 
 //viewRoute.get('/', createBookingCheckout, isLoggedIn, getOverview);
 viewRoute.get('/', isLoggedIn, getOverview);
