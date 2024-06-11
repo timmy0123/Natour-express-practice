@@ -14,6 +14,7 @@ import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import reviewRouter from './routes/reviewRoutes.js';
 import bookingRouter from './routes/bookingRoutes.js';
+import { webhookCheckout } from './controllers/bookingController.js';
 import AppError from './utils/appError.js';
 import errorController from './controllers/errorController.js';
 import viewRoute from './routes/viewRoutes.js';
@@ -110,6 +111,13 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 app.use(compression());
+
+// the stripe should read body in row not json
+app.post(
+  '/webhook-checkout',
+  express.raw({ type: 'application/json' }),
+  webhookCheckout,
+);
 
 //set body parser, read data from body into req.body
 app.use(express.json({ limit: '10kb' }));

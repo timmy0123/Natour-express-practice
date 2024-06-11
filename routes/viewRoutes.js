@@ -7,12 +7,13 @@ import {
   updateUserData,
   getMyTours,
 } from '../controllers/viewController.js';
-import { createBookingCheckout } from '../controllers/bookingController.js';
+//import { createBookingCheckout } from '../controllers/bookingController.js';
 import { isLoggedIn, protect } from '../controllers/authController.js';
 
 const viewRoute = express.Router();
 
-viewRoute.get('/', createBookingCheckout, isLoggedIn, getOverview);
+//viewRoute.get('/', createBookingCheckout, isLoggedIn, getOverview);
+viewRoute.get('/', isLoggedIn, getOverview);
 viewRoute.get('/tour/:slug', isLoggedIn, getTour);
 viewRoute.get('/login', isLoggedIn, getLoginForm);
 viewRoute.get('/me', protect, getAccount);
