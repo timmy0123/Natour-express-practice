@@ -24,7 +24,21 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.enable('trust proxy');
 
+// Implementing CORS
 app.use(cors());
+
+// Access-Control-Allow-Origin *
+// api.natours.com, natours.com
+// app.use(cors({
+//   origin: 'https://www.natours.com'
+// }))
+
+// simple request get, post
+// allow none simple requests like patch, delete
+app.options('*', cors());
+// only on specific route
+// app.options('/api/v1/tours/:id', cors());
+
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 // Serving static files
