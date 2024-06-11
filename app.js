@@ -8,6 +8,7 @@ import helmet from 'helmet';
 import ExpressMongoSanitize from 'express-mongo-sanitize';
 import xss from 'xss-clean';
 import hpp from 'hpp';
+import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
@@ -22,12 +23,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-app.use(
-  cors({
-    origin: 'http://127.0.0.1:3000', // Client origin
-    credentials: true,
-  }),
-);
+app.use(cors());
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 // Serving static files
@@ -97,6 +93,8 @@ app.use(
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
+app.use(compression());
 
 //set body parser, read data from body into req.body
 app.use(express.json({ limit: '10kb' }));
