@@ -37,4 +37,12 @@ import('./app.js').then((module) => {
       process.exit(1);
     });
   });
+
+  process.on('SIGTERM', () => {
+    console.log('👋 SIGTERM RECEIVED. Shutting down gracefully');
+    // wait for the server to handle the pending request
+    server.close(() => {
+      console.log('💥 Process terminated!');
+    });
+  });
 });

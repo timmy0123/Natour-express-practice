@@ -11,16 +11,16 @@ const signToken = (id) =>
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
-const createSendToken = (user, statusCode, res) => {
+const createSendToken = (user, statusCode, req, res) => {
   const token = signToken(user._id);
-  const cookieOptions = {
+
+  res.cookie('jwt', token, {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
     ),
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-  };
-  res.cookie('jwt', token, cookieOptions);
+    secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+  });
   //remove password from output
   user.password = undefined;
   res.status(statusCode).json({
@@ -53,7 +53,7 @@ export const signup = catchAsync(async (req, res, next) => {
   //});
   const url = `${req.protocol}://${req.get('host')}/me`;
   await new Email(newUser, url).sendWelcome();
-  createSendToken(newUser, 201, res);
+  createSendToken(newUser, 201, req, res);
 });
 
 export const login = catchAsync(async (req, res, next) => {
@@ -68,7 +68,7 @@ export const login = catchAsync(async (req, res, next) => {
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError('Incorrect email or password', 401));
   }
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
   //const token = signToken(user._id);
 
   //res.status(200).json({
@@ -228,7 +228,7 @@ export const resetPassword = catchAsync(async (req, res, next) => {
   //3) update changedPasswordAt property for the user
   //4) log the user in, send JWT
 
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
   //const token = signToken(user._id);
 
   //res.status(200).json({
@@ -250,7 +250,7 @@ export const updatePassword = catchAsync(async (req, res, next) => {
   await user.save();
   //4) Log user in, send JWT
 
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
   //const token = signToken(user._id);
 
   //res.status(200).json({
